@@ -358,7 +358,7 @@ def key_signature_block(scale_notes):
             \\clef treble
             \\key {ly_tonic} \\{ly_mode}
             \\cadenzaOn
-            s1
+            s1 s1 s1
           }}
           \\layout {{
             ragged-right = ##f
@@ -1099,15 +1099,17 @@ def build_lytex_wrapper(doc_title, entries_data):
         score_block = re.sub(r'^\s*title\s*=\s*".*"\s*$', '', score_block, flags=re.MULTILINE)
 
         parts.extend([
-            rf"\section*{{{latex_escape(entry_name)}}}",
-            "",
-            r"\begin{lilypond}",
-            r'\version "2.24.0"',
-            score_block.strip(),
-            r"\end{lilypond}",
-            "",
-            r"\bigskip",
-        ])
+                    rf"\section*{{{latex_escape(entry_name)}}}",
+                    "",
+                    r"\begin{center}",
+                    r"\begin{lilypond}",
+                    r'\version "2.24.0"',
+                    score_block.strip(),
+                    r"\end{lilypond}",
+                    r"\end{center}",
+                    "",
+                    r"\bigskip",
+                ])
 
         for inv_label, image_base in keyboard_images:
             is_harmonized_chart = image_base.endswith("-harmonized") or \

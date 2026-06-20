@@ -83,5 +83,15 @@ finish the PDF yourself once those tools are installed.
 - Each click of "Generate PDF" runs independently -- the form doesn't
   remember previous chords, matching the simpler one-document-per-run
   workflow.
+- Want multiple chords or scales combined into one document -- say, a
+  whole harmonized scale's chords alongside a few extra chords you
+  spell by hand, all in one PDF? The command-line version
+  (`chord_diagram.py`, run directly with `python3 chord_diagram.py`)
+  supports this: after each chord or scale, it asks "Add another
+  chord or scale?" and keeps looping until you say no, then builds
+  everything into a single combined document. The web form here is
+  intentionally simpler -- one chord or scale, one document, one
+  click -- so if you want that extra flexibility, use the CLI
+  directly instead.
 - This is meant for one person using it locally. It is not hardened
   for being exposed on a network or used by multiple people at once.

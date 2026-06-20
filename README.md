@@ -102,3 +102,6 @@ finish the PDF yourself once those tools are installed.
 - Sharp-keys default filename doesn't distinguish *sharp* at all.
 - Center scale staff when key signature engraver is present.
 - Perhaps highlight tonic note on fretboard layout.
+- Remove b11 and the upper 5 and 7 from the harmonized chords chart
+- CAGED shapes not showing extended sevenths? Root probably dominates
+- Diatonic functions incorrect for Maj7 as a V

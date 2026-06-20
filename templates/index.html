@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chord & Scale Diagram Generator</title>
+<style>
+  :root {
+    --paper: #FAF7F0;
+    --ink: #2C2825;
+    --ink-soft: #6B6258;
+    --rule: #D8D0C2;
+    --coral: #D85A30;
+    --coral-deep: #993C1D;
+    --coral-pale: #F3E4DC;
+    --panel: #FFFFFF;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    padding-bottom: 4rem;
+  }
+
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  header {
+    padding: 3rem 0 2rem;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 2rem;
+  }
+
+  header h1 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-weight: 700;
+    font-size: 2.1rem;
+    letter-spacing: -0.01em;
+    margin: 0 0 0.4rem;
+    color: var(--ink);
+  }
+
+  header p {
+    color: var(--ink-soft);
+    margin: 0;
+    font-size: 0.97rem;
+    max-width: 46ch;
+  }
+
+  .staff-rule {
+    height: 3px;
+    width: 48px;
+    background: var(--coral);
+    margin: 0.9rem 0 0;
+    border-radius: 2px;
+  }
+
+  fieldset {
+    border: none;
+    margin: 0 0 2rem;
+    padding: 0;
+  }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 1.5rem 1.6rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .card-title {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    font-size: 1.05rem;
+    margin: 0 0 1rem;
+    color: var(--ink);
+  }
+
+  label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--ink-soft);
+    margin-bottom: 0.35rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .field { margin-bottom: 1.1rem; }
+  .field:last-child { margin-bottom: 0; }
+
+  .hint {
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    margin-top: 0.35rem;
+  }
+
+  input[type="text"], select {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    border: 1.5px solid var(--rule);
+    border-radius: 7px;
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 0.95rem;
+    font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+    transition: border-color 0.15s ease;
+  }
+
+  input[type="text"].mono {
+    font-family: 'SF Mono', 'Consolas', 'Menlo', monospace;
+    font-size: 0.92rem;
+    letter-spacing: 0.02em;
+  }
+
+  input[type="text"]:focus, select:focus {
+    outline: none;
+    border-color: var(--coral);
+    box-shadow: 0 0 0 3px var(--coral-pale);
+  }
+
+  /* Mode toggle */
+  .mode-toggle {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .mode-toggle input { display: none; }
+  .mode-toggle label {
+    flex: 1;
+    text-align: center;
+    padding: 0.65rem 1rem;
+    border: 1.5px solid var(--rule);
+    border-radius: 7px;
+    cursor: pointer;
+    text-transform: none;
+    font-weight: 600;
+    font-size: 0.92rem;
+    color: var(--ink-soft);
+    background: var(--paper);
+    transition: all 0.15s ease;
+    margin-bottom: 0;
+  }
+  .mode-toggle input:checked + label {
+    background: var(--coral);
+    border-color: var(--coral);
+    color: white;
+  }
+
+  .row {
+    display: flex;
+    gap: 1rem;
+  }
+  .row > .field { flex: 1; }
+
+  /* Checkbox rows */
+  .check-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    padding: 0.15rem 0;
+  }
+  .check-row input[type="checkbox"] {
+    margin-top: 0.2rem;
+    width: 17px;
+    height: 17px;
+    accent-color: var(--coral);
+    flex-shrink: 0;
+  }
+  .check-row .check-text { flex: 1; }
+  .check-row .check-text strong {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--ink);
+    text-transform: none;
+  }
+  .check-row .check-text span {
+    display: block;
+    font-size: 0.83rem;
+    color: var(--ink-soft);
+    margin-top: 0.1rem;
+  }
+
+  .nested {
+    margin-top: 0.9rem;
+    padding-top: 0.9rem;
+    border-top: 1px dashed var(--rule);
+    margin-left: 1.85rem;
+    display: none;
+  }
+  .nested.visible { display: block; }
+
+  /* Submit */
+  .submit-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  button[type="submit"] {
+    background: var(--coral);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.85rem 1.8rem;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  button[type="submit"]:hover { background: var(--coral-deep); }
+  button[type="submit"]:disabled { background: var(--rule); cursor: wait; }
+
+  #status {
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+  }
+
+  #status.error { color: var(--coral-deep); font-weight: 500; }
+  #status.success { color: #3D7A4A; font-weight: 500; }
+
+  #result-box {
+    margin-top: 1.5rem;
+    padding: 1.1rem 1.4rem;
+    border-radius: 8px;
+    border: 1.5px solid var(--rule);
+    background: var(--panel);
+    display: none;
+  }
+  #result-box.visible { display: block; }
+  #result-box a {
+    color: var(--coral-deep);
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1.5px solid var(--coral);
+  }
+  #result-box a:hover { color: var(--coral); }
+  #result-box p { margin: 0.3rem 0 0; font-size: 0.87rem; color: var(--ink-soft); }
+
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2.5px solid var(--rule);
+    border-top-color: var(--coral);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+  .spinner.visible { display: inline-block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  footer {
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 0.8rem;
+    margin-top: 3rem;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Chord &amp; Scale Diagrams</h1>
+    <p>Spell a chord or scale, choose what to generate, and get back keyboard diagrams plus a notated PDF.</p>
+    <div class="staff-rule"></div>
+  </header>
+
+  <form id="genForm">
+
+    <fieldset class="card">
+      <div class="card-title">What are you spelling?</div>
+      <div class="field">
+        <div class="mode-toggle">
+          <input type="radio" name="mode" id="mode-chord" value="chord" checked>
+          <label for="mode-chord">A chord</label>
+          <input type="radio" name="mode" id="mode-scale" value="scale">
+          <label for="mode-scale">A scale</label>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="card">
+      <div class="card-title">Spelling</div>
+      <div class="field">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" placeholder="e.g. Ab major">
+        <div class="hint">Used for labels and filenames. Leave blank for an automatic name.</div>
+      </div>
+
+      <div class="field" id="chord-spelling-field">
+        <label for="chord_spelling">Root-position spelling, low to high</label>
+        <input type="text" class="mono" id="chord_spelling" name="chord_spelling" placeholder="Ab C Eb">
+        <div class="hint">Space-separated notes. Use b for flat, # for sharp (e.g. Bb, F#).</div>
+      </div>
+
+      <div class="field" id="scale-spelling-field" style="display:none;">
+        <label for="scale_spelling">Scale spelling, tonic first</label>
+        <input type="text" class="mono" id="scale_spelling" name="scale_spelling" placeholder="C D E F G A B C">
+        <div class="hint">Include the octave repeat at the end if you like &mdash; it's trimmed automatically before harmonizing.</div>
+      </div>
+    </fieldset>
+
+    <fieldset class="card" id="chord-options-card">
+      <div class="card-title">Chord options</div>
+      <div class="field">
+        <label for="inversions">Inversions to generate</label>
+        <select id="inversions" name="inversions">
+          <option value="">All (default)</option>
+        </select>
+      </div>
+      <div class="check-row">
+        <input type="checkbox" id="full_chord" name="full_chord">
+        <label for="full_chord" class="check-text" style="text-transform:none;">
+          <strong>Full chord view</strong>
+          <span>Every occurrence of each chord tone repeated across 5 octaves, on its own keyboard diagram.</span>
+        </label>
+      </div>
+      <div class="check-row">
+        <input type="checkbox" id="info_panel" name="info_panel">
+        <label for="info_panel" class="check-text" style="text-transform:none;">
+          <strong>Diatonic key &amp; function info</strong>
+          <span>Lists every major/minor key this chord belongs to, and its Roman-numeral function in each (e.g. G minor as ii in F major).</span>
+        </label>
+      </div>
+      <div class="check-row">
+        <input type="checkbox" id="guitar_shapes" name="guitar_shapes">
+        <label for="guitar_shapes" class="check-text" style="text-transform:none;">
+          <strong>Guitar fretboard (CAGED shapes)</strong>
+          <span>All 5 movable CAGED shapes (C, A, G, E, D forms) for this chord, major or minor triads only.</span>
+        </label>
+      </div>
+      <div class="check-row">
+        <input type="checkbox" id="full_fretboard" name="full_fretboard">
+        <label for="full_fretboard" class="check-text" style="text-transform:none;">
+          <strong>Full fretboard (every occurrence)</strong>
+          <span>Every chord tone across all 6 strings and 12 frets &mdash; works for any chord, not just major/minor triads.</span>
+        </label>
+      </div>
+    </fieldset>
+
+    <fieldset class="card" id="scale-options-card" style="display:none;">
+      <div class="card-title">Scale options</div>
+
+      <div class="check-row">
+        <input type="checkbox" id="key_signature" name="key_signature">
+        <label for="key_signature" class="check-text" style="text-transform:none;">
+          <strong>Key signature staff</strong>
+          <span>A small staff showing just the clef and key signature (sharps/flats in correct order) for this scale &mdash; closest matching key for non-standard scales like harmonic minor.</span>
+        </label>
+      </div>
+
+      <div class="check-row">
+        <input type="checkbox" id="scale_full_fretboard" name="scale_full_fretboard">
+        <label for="scale_full_fretboard" class="check-text" style="text-transform:none;">
+          <strong>Full guitar fretboard</strong>
+          <span>Every scale tone across all 6 strings and 12 frets, labeled by letter name.</span>
+        </label>
+      </div>
+
+      <div class="check-row">
+        <input type="checkbox" id="harmonize" name="harmonize">
+        <label for="harmonize" class="check-text" style="text-transform:none;">
+          <strong>Harmonized chord chart</strong>
+          <span>Build a triad (or seventh chord) on every scale degree and chart the intervals chromatically.</span>
+        </label>
+      </div>
+
+      <div class="nested" id="harmonize-nested">
+        <div class="field">
+          <label>Chord size</label>
+          <div class="mode-toggle">
+            <input type="radio" name="chord_size" id="size-triad" value="3" checked>
+            <label for="size-triad">Triads</label>
+            <input type="radio" name="chord_size" id="size-seventh" value="7">
+            <label for="size-seventh">7th chords</label>
+          </div>
+        </div>
+
+        <div class="check-row">
+          <input type="checkbox" id="render_chords" name="render_chords">
+          <label for="render_chords" class="check-text" style="text-transform:none;">
+            <strong>Render every harmonized chord</strong>
+            <span>Each chord built from the chart gets its own keyboard diagrams and staff, just like spelling it by hand.</span>
+          </label>
+        </div>
+
+        <div class="nested" id="render-chords-nested">
+          <div class="row">
+            <div class="field">
+              <label for="chord_inversions">Inversions per chord</label>
+              <select id="chord_inversions" name="chord_inversions">
+                <option value="">All (default)</option>
+                <option value="1">Root position only</option>
+                <option value="2">Up to 1st inversion</option>
+                <option value="3">Up to 2nd inversion</option>
+              </select>
+            </div>
+          </div>
+          <div class="check-row">
+            <input type="checkbox" id="chord_full_chord" name="chord_full_chord">
+            <label for="chord_full_chord" class="check-text" style="text-transform:none;">
+              <strong>Full chord view for each</strong>
+              <span>Adds the 5-octave repeated view to every harmonized chord too.</span>
+            </label>
+          </div>
+          <div class="check-row">
+            <input type="checkbox" id="chord_info_panel" name="chord_info_panel">
+            <label for="chord_info_panel" class="check-text" style="text-transform:none;">
+              <strong>Diatonic key &amp; function info for each</strong>
+              <span>Adds the key/function reference panel to every harmonized chord too.</span>
+            </label>
+          </div>
+          <div class="check-row">
+            <input type="checkbox" id="chord_guitar_shapes" name="chord_guitar_shapes">
+            <label for="chord_guitar_shapes" class="check-text" style="text-transform:none;">
+              <strong>Guitar fretboard (CAGED shapes) for each</strong>
+              <span>Adds all 5 CAGED shapes to every harmonized chord too (major/minor triads only).</span>
+            </label>
+          </div>
+          <div class="check-row">
+            <input type="checkbox" id="chord_full_fretboard" name="chord_full_fretboard">
+            <label for="chord_full_fretboard" class="check-text" style="text-transform:none;">
+              <strong>Full fretboard for each</strong>
+              <span>Adds the every-occurrence 12-fret view to every harmonized chord too.</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="card">
+      <div class="card-title">Output</div>
+      <div class="field">
+        <label for="output_filename">Output filename</label>
+        <input type="text" class="mono" id="output_filename" name="output_filename" placeholder="(automatic)">
+        <div class="hint">No extension needed. Leave blank to name it after the chord or scale.</div>
+      </div>
+    </fieldset>
+
+    <div class="submit-row">
+      <button type="submit" id="submitBtn">Generate PDF</button>
+      <div class="spinner" id="spinner"></div>
+      <span id="status"></span>
+    </div>
+
+    <div id="result-box">
+      <a id="downloadLink" href="#" download>Download result</a>
+      <p id="resultDetail"></p>
+    </div>
+
+  </form>
+
+  <footer>Runs locally &middot; nothing leaves this machine</footer>
+</div>
+
+<script>
+  const modeChord = document.getElementById('mode-chord');
+  const modeScale = document.getElementById('mode-scale');
+  const chordSpellingField = document.getElementById('chord-spelling-field');
+  const scaleSpellingField = document.getElementById('scale-spelling-field');
+  const chordOptionsCard = document.getElementById('chord-options-card');
+  const scaleOptionsCard = document.getElementById('scale-options-card');
+
+  function syncMode() {
+    const isChord = modeChord.checked;
+    chordSpellingField.style.display = isChord ? '' : 'none';
+    scaleSpellingField.style.display = isChord ? 'none' : '';
+    chordOptionsCard.style.display = isChord ? '' : 'none';
+    scaleOptionsCard.style.display = isChord ? 'none' : '';
+  }
+  modeChord.addEventListener('change', syncMode);
+  modeScale.addEventListener('change', syncMode);
+
+  // Inversions dropdown population scales with however many notes are
+  // typed in the chord field, since a 3-note chord has 3 possible
+  // inversions but a 4-note chord has 4.
+  const chordSpellingInput = document.getElementById('chord_spelling');
+  const inversionsSelect = document.getElementById('inversions');
+  function syncInversionOptions() {
+    const n = chordSpellingInput.value.trim().split(/\s+/).filter(Boolean).length;
+    const max = Math.max(n, 1);
+    const current = inversionsSelect.value;
+    inversionsSelect.innerHTML = '<option value="">All (default)</option>';
+    const names = ['Root position only', 'Up to 1st inversion', 'Up to 2nd inversion',
+                   'Up to 3rd inversion', 'Up to 4th inversion', 'Up to 5th inversion',
+                   'Up to 6th inversion'];
+    for (let i = 1; i <= max; i++) {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = names[i-1] || `Up to inversion ${i-1}`;
+      inversionsSelect.appendChild(opt);
+    }
+    inversionsSelect.value = current;
+  }
+  chordSpellingInput.addEventListener('input', syncInversionOptions);
+
+  // Nested reveal sections
+  const harmonizeCheck = document.getElementById('harmonize');
+  const harmonizeNested = document.getElementById('harmonize-nested');
+  harmonizeCheck.addEventListener('change', () => {
+    harmonizeNested.classList.toggle('visible', harmonizeCheck.checked);
+  });
+
+  const renderChordsCheck = document.getElementById('render_chords');
+  const renderChordsNested = document.getElementById('render-chords-nested');
+  renderChordsCheck.addEventListener('change', () => {
+    renderChordsNested.classList.toggle('visible', renderChordsCheck.checked);
+  });
+
+  // Submit via fetch so we can show a spinner and a clean result panel
+  // instead of navigating away from the form.
+  const form = document.getElementById('genForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const spinner = document.getElementById('spinner');
+  const status = document.getElementById('status');
+  const resultBox = document.getElementById('result-box');
+  const downloadLink = document.getElementById('downloadLink');
+  const resultDetail = document.getElementById('resultDetail');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    submitBtn.disabled = true;
+    spinner.classList.add('visible');
+    status.textContent = 'Generating\u2026';
+    status.className = '';
+    resultBox.classList.remove('visible');
+
+    try {
+      const resp = await fetch('/generate', { method: 'POST', body: new FormData(form) });
+      const data = await resp.json();
+
+      if (data.ok) {
+        status.textContent = 'Done.';
+        status.className = 'success';
+        downloadLink.href = data.download_url;
+        downloadLink.textContent = 'Download PDF';
+        resultDetail.textContent = data.message || '';
+        resultBox.classList.add('visible');
+      } else if (data.download_url) {
+        // lilypond-book wasn't available -- we still got a zip of
+        // everything that COULD be generated.
+        status.textContent = 'LilyPond not found on this machine \u2014 partial result ready.';
+        status.className = 'error';
+        downloadLink.href = data.download_url;
+        downloadLink.textContent = 'Download files (.zip)';
+        resultDetail.textContent = data.message || '';
+        resultBox.classList.add('visible');
+      } else {
+        status.textContent = data.error || 'Something went wrong.';
+        status.className = 'error';
+      }
+    } catch (err) {
+      status.textContent = 'Request failed: ' + err.message;
+      status.className = 'error';
+    } finally {
+      submitBtn.disabled = false;
+      spinner.classList.remove('visible');
+    }
+  });
+
+  syncMode();
+  syncInversionOptions();
+</script>
+</body>
+</html>

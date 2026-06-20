@@ -349,22 +349,23 @@ def key_signature_block(scale_notes):
     mode_display = MODE_DISPLAY_NAME[mode_name]
     tonic_display = key_display_name(tonic_letter, tonic_accidental)
 
-    score_block = f'''\markup {{ \bold "Key Signature" }}
-    
-    \score {{
-      \new Staff \with {{
-        \remove "Time_signature_engraver"
-      }} {{
-        \clef treble
-        \key {ly_tonic} \{ly_mode}
-        \cadenzaOn
-        s1 s1 s1
-      }}
-      \layout {{
-        ragged-right = ##f
-        line-width = 40\mm
-      }}
-    }}'''
+    score_block = f'''\\markup {{ \\bold "Key Signature" }}
+        
+        \\score {{
+          \\new Staff \\with {{
+            \\remove "Time_signature_engraver"
+          }} {{
+            \\clef treble
+            \\key {ly_tonic} \\{ly_mode}
+            \\cadenzaOn
+            s1
+          }}
+          \\layout {{
+            ragged-right = ##f
+            line-width = 40\\mm
+          }}
+        }}'''
+
     if diffs:
         descriptions = [describe_degree_difference(d, s) for d, s in diffs]
         info_message = (

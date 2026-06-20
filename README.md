@@ -95,3 +95,10 @@ finish the PDF yourself once those tools are installed.
   directly instead.
 - This is meant for one person using it locally. It is not hardened
   for being exposed on a network or used by multiple people at once.
+
+
+## To-Do
+
+- Sharp-keys default filename doesn't distinguish *sharp* at all.
+- Center scale staff when key signature engraver is present.
+- Perhaps highlight tonic note on fretboard layout.

@@ -30,6 +30,22 @@ MAJOR_SCALE_SEMITONES = {1: 0, 2: 2, 3: 4, 4: 5, 5: 7, 6: 9, 7: 11}
 LY_SHARP = "is"
 LY_FLAT = "es"
 
+# Maximum width (mm) the main notation staff is allowed to use before
+# wrapping to a new line -- with ragged-right = ##t (see
+# build_single_lilypond) this is a CEILING, not a forced stretch
+# target: short chords/scales render at their natural width and don't
+# get stretched out to fill this whole span. Set comfortably inside
+# this document's real LaTeX text width (US Letter, 1in margins ->
+# ~165mm) so nothing here can overflow the page.
+PAPER_LINE_WIDTH_MM = 160
+
+# How many octaves the "full scale across the keyboard" view repeats
+# the scale's tones over. Chords default to 5 octaves for their full
+# view, but a 7-note scale repeated 5x is a lot of crowded dots --
+# 3 is enough to show the repeating pattern clearly without the
+# diagram becoming unreadable.
+FULL_SCALE_KEYBOARD_OCTAVES = 3
+
 
 def parse_note(token):
     token = token.strip()
@@ -362,6 +378,7 @@ def key_signature_block(scale_notes):
           }}
           \\layout {{
             ragged-right = ##f
+            indent = 0\\mm
             line-width = 40\\mm
           }}
         }}'''
@@ -399,6 +416,35 @@ def build_single_lilypond(title, blocks, extra_score_blocks=None):
     explicit \\book -- without this wrapper the key signature staff
     would compile without error but silently never appear in the
     final PDF.
+
+    Each \\score sets its own line-width (the main staff wants to be
+    wider than the little key-signature-only staff). Several earlier
+    attempts at this fix tried to get LilyPond's own margin/centering
+    math to land the system in the middle of the declared line-width
+    (which was itself meant to match the real LaTeX page) -- but a
+    real rendered PDF still showed the main staff sitting well right
+    of center (measured ~25mm off on a US Letter page), while the
+    keyboard/fretboard images (centered via plain LaTeX \\begin{center}
+    on a normal image, no LilyPond involved) landed dead center.
+
+    That comparison is the key clue: LaTeX's own \\begin{center} DOES
+    work correctly here -- it's just centering a LilyPond-rendered
+    image whose own bounding box has asymmetric whitespace baked into
+    it. With ragged-right = ##f (the old setting), LilyPond stretches
+    the system to fill the FULL declared line-width regardless of how
+    much actual music is in it -- so the rendered image's bounding box
+    is that whole stretched line-width, and if the notes don't end up
+    sitting symmetrically inside it (e.g. because of indent, or just
+    how the engraver placed things), centering that box centers the
+    box, not the notes inside it.
+
+    The fix: ragged-right = ##t makes each system crop to its natural
+    width instead of stretching to fill line-width -- the same "tight
+    bounding box" approach the keyboard/fretboard PNGs already use
+    (matplotlib's bbox_inches='tight'), which is exactly why THOSE
+    already centered correctly. line-width is kept as a maximum/wrap
+    width, not a forced stretch target, so a short chord/scale doesn't
+    accidentally get stretched out across the whole page width.
     """
     safe_title = title.replace('"', r'\"')
     body = "\n    ".join(blocks)
@@ -409,9 +455,15 @@ def build_single_lilypond(title, blocks, extra_score_blocks=None):
     {body}
   }}
   \\layout {{
-    ragged-right = ##f
-    line-width = 160\\mm
+    ragged-right = ##t
+    indent = 0\\mm
+    line-width = {PAPER_LINE_WIDTH_MM}\\mm
   }}
+}}'''
+
+    paper_block = f'''\\paper {{
+  indent = 0\\mm
+  line-width = {PAPER_LINE_WIDTH_MM}\\mm
 }}'''
 
     if extra_score_blocks:
@@ -427,6 +479,8 @@ def build_single_lilypond(title, blocks, extra_score_blocks=None):
 }}
 
 \\book {{
+{paper_block}
+
 {all_scores}
 }}
 '''
@@ -439,6 +493,8 @@ def build_single_lilypond(title, blocks, extra_score_blocks=None):
   title = "{safe_title}"
   tagline = ##f
 }}
+
+{paper_block}
 
 {main_score}
 '''
@@ -1181,6 +1237,12 @@ def try_run_lilypond_book(lytex_filename, all_keyboard_images, out_dir="lilypond
 def slugify(text):
     text = unicodedata.normalize('NFKD', text)
     text = text.encode('ascii', 'ignore').decode('ascii')
+    # '#' (sharp) would otherwise just get silently stripped by the
+    # punctuation regex below -- since 'b' (flat) is already a letter
+    # and survives on its own, that asymmetry meant "F# major" and
+    # "F major" both slugified to "f-major". Spell sharps out so they
+    # survive too, and so two different keys never collide on disk.
+    text = text.replace('#', 'sharp')
     text = re.sub(r'[^\w\s-]', '', text).strip().lower()
     text = re.sub(r'[\s_-]+', '-', text)
     return text or "untitled"
@@ -1313,6 +1375,14 @@ FRETBOARD_HL_STROKE = "#993C1D"
 FRETBOARD_HL_TEXT = "#FFFFFF"
 FRETBOARD_MUTE_COLOR = "#B0B0AA"
 FRETBOARD_OPEN_RING_COLOR = "#444441"
+# Root/tonic gets its own color on the full-fretboard overview so it
+# reads at a glance, the same way a root note is conventionally called
+# out on printed scale/chord reference charts. Picked to sit clearly
+# apart from the coral used for every other tone, while still fitting
+# the same warm, muted palette as the rest of the diagrams.
+FRETBOARD_ROOT_FILL = "#2C2825"
+FRETBOARD_ROOT_STROKE = "#000000"
+FRETBOARD_ROOT_TEXT = "#FFFFFF"
 
 FRETBOARD_N_STRINGS = 6
 FRETBOARD_MIN_FRETS_SHOWN = 4
@@ -1473,7 +1543,7 @@ def draw_all_caged_shapes(root_letter, root_accidental, quality_abbrev, chord_na
 FRETBOARD_FULL_N_FRETS = 12
 
 
-def draw_full_fretboard(target_pcs_to_label, title, base_filename):
+def draw_full_fretboard(target_pcs_to_label, title, base_filename, root_pc=None):
     """
     Every occurrence of every target pitch class, across all 6 strings
     and frets 0-12 (one full octave plus the open position) -- the
@@ -1485,6 +1555,11 @@ def draw_full_fretboard(target_pcs_to_label, title, base_filename):
     target_pcs_to_label: dict {pitch_class (0-11): display_label}, e.g.
     {0: 'C', 4: 'E', 7: 'G'} for a C major chord, or all 7 (or however
     many) scale tones for a scale overview.
+
+    root_pc: pitch class (0-11) of the chord root or scale tonic, if
+    known. Every occurrence of this pitch class gets its own color so
+    the root stands out from the other chord/scale tones at a glance.
+    None (the default) draws every tone the same way, as before.
     """
     string_spacing = 1.0
     fret_spacing = 0.85  # slightly tighter than the CAGED diagrams so
@@ -1543,12 +1618,16 @@ def draw_full_fretboard(target_pcs_to_label, title, base_filename):
             # visually overlap (their separation is less than one dot
             # diameter at this scale).
             x_center = (fret_x(0) - 0.32) if f == 0 else (fret_x(f) + fret_x(f - 1)) / 2
-            dot = Circle((x_center, y), dot_radius, facecolor=FRETBOARD_HL_FILL,
-                         edgecolor=FRETBOARD_HL_STROKE, linewidth=1.1, zorder=3)
+            is_root = (root_pc is not None and pc == root_pc)
+            fill = FRETBOARD_ROOT_FILL if is_root else FRETBOARD_HL_FILL
+            stroke = FRETBOARD_ROOT_STROKE if is_root else FRETBOARD_HL_STROKE
+            text_color = FRETBOARD_ROOT_TEXT if is_root else FRETBOARD_HL_TEXT
+            dot = Circle((x_center, y), dot_radius, facecolor=fill,
+                         edgecolor=stroke, linewidth=1.1, zorder=3)
             ax.add_patch(dot)
             label = target_pcs_to_label[pc]
             ax.text(x_center, y, label, ha='center', va='center', fontsize=7.5,
-                    color=FRETBOARD_HL_TEXT, fontweight='bold', zorder=4)
+                    color=text_color, fontweight='bold', zorder=4)
 
     ax.set_xlim(margin_left - 0.55, board_w + margin_left + margin_right)
     ax.set_ylim(margin_top + board_h + 0.6, -0.5)
@@ -1569,28 +1648,32 @@ def draw_full_fretboard_chord(parsed_root, chord_name, base_slug):
     """
     Full-fretboard view for a chord -- every occurrence of every chord
     tone, labeled by letter name (matching the keyboard's full-chord
-    style). Unlike CAGED, this works for ANY chord quality (not just
-    plain major/minor triads), since it's just a pitch-class lookup,
-    no shape templates involved.
+    style), with the chord's root tone highlighted in its own color.
+    Unlike CAGED, this works for ANY chord quality (not just plain
+    major/minor triads), since it's just a pitch-class lookup, no
+    shape templates involved.
     """
     target_pcs = {}
     for letter, accidental, pc, display_name in parsed_root:
         target_pcs[pc] = display_name
+    root_pc = parsed_root[0][2]
     img_base = f"{base_slug}-fretboard-full"
-    draw_full_fretboard(target_pcs, f"{chord_name} \u2013 Full fretboard", img_base)
+    draw_full_fretboard(target_pcs, f"{chord_name} \u2013 Full fretboard", img_base, root_pc=root_pc)
     return [(f"{chord_name} \u2013 Full fretboard (guitar)", img_base)]
 
 
 def draw_full_fretboard_scale(parsed_scale, scale_name, base_slug):
     """
     Full-fretboard view for a scale -- every occurrence of every scale
-    tone across the neck, labeled by letter name.
+    tone across the neck, labeled by letter name, with the tonic
+    highlighted in its own color.
     """
     target_pcs = {}
     for letter, accidental, pc, display_name in parsed_scale:
         target_pcs[pc] = display_name
+    root_pc = parsed_scale[0][2]
     img_base = f"{base_slug}-fretboard-full"
-    draw_full_fretboard(target_pcs, f"{scale_name} \u2013 Full fretboard", img_base)
+    draw_full_fretboard(target_pcs, f"{scale_name} \u2013 Full fretboard", img_base, root_pc=root_pc)
     return [(f"{scale_name} \u2013 Full fretboard (guitar)", img_base)]
 
 
@@ -1809,6 +1892,38 @@ def process_one_entry(entry_num):
             scale_fretboard_raw = ""
         if scale_fretboard_raw in ("y", "yes"):
             scale_images.extend(draw_full_fretboard_scale(parsed, name, slug))
+
+        # Full scale across multiple octaves on the keyboard -- the
+        # scale equivalent of a chord's "full chord view". A scale
+        # spelling normally ends on a repeated tonic (e.g. "C D E F G
+        # A B C"); repeating THAT note set verbatim across octaves
+        # would double up the tonic at every octave seam, so the
+        # repeat is dropped first, the same way it already is before
+        # harmonizing.
+        full_scale_notes = parsed
+        if len(parsed) > 1:
+            first_pc_fs = (PITCH_CLASS[parsed[0][0]] + parsed[0][1]) % 12
+            last_pc_fs = (PITCH_CLASS[parsed[-1][0]] + parsed[-1][1]) % 12
+            if first_pc_fs == last_pc_fs:
+                full_scale_notes = parsed[:-1]
+        try:
+            full_scale_raw = input(
+                f"Show full scale across multiple octaves on the keyboard "
+                f"for {name}? [y/N]: "
+            ).strip().lower()
+        except EOFError:
+            full_scale_raw = ""
+        if full_scale_raw in ("y", "yes"):
+            full_scale_voicing = generate_full_chord_voicing(
+                full_scale_notes, FULL_SCALE_KEYBOARD_OCTAVES, start_octave=3
+            )
+            full_scale_labels = degree_labels_for_voicing(
+                full_scale_voicing, root_letter, root_accidental
+            )
+            full_scale_img_base = f"{slug}-full-scale"
+            draw_keyboard(full_scale_voicing, full_scale_labels, full_scale_img_base,
+                          min_octaves=FULL_SCALE_KEYBOARD_OCTAVES)
+            scale_images.append((f"{name} \u2013 Full scale", full_scale_img_base))
 
         # Harmonized chord chart: drop a trailing repeated tonic if present
         # (e.g. "C D E F G A B C" -> harmonize using just the first 7), so

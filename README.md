@@ -96,12 +96,15 @@ finish the PDF yourself once those tools are installed.
 - This is meant for one person using it locally. It is not hardened
   for being exposed on a network or used by multiple people at once.
 
-
 ## To-Do
 
-- Sharp-keys default filename doesn't distinguish *sharp* at all.
-- Center scale staff when key signature engraver is present.
-- Perhaps highlight tonic note on fretboard layout.
-- Remove b11 and the upper 5 and 7 from the harmonized chords chart
-- CAGED shapes not showing extended sevenths? Root probably dominates
-- Diatonic functions incorrect for Maj7 as a V
+- [x] Sharp-keys default filename doesn't distinguish *sharp* at all.
+- [x] Center scale staff when key signature engraver is present.
+- [x] Perhaps highlight tonic note on fretboard layout.
+- [ ] Remove b11 and the upper 5 and 7 from the harmonized chords chart
+- [ ] CAGED shapes not showing extended sevenths? Root probably dominates
+- [ ] Diatonic functions incorrect for Maj7 as a V
+- [ ] Choose which clef for staves
+- [x] Show full scale on keyboard option
+- [ ] Fingerings for chords/scales?
+

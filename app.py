@@ -103,6 +103,18 @@ def run_pipeline(form, work_dir):
             if first_pc == last_pc:
                 harmonize_notes = parsed[:-1]
 
+        if form.get("scale_full_keyboard") == "on":
+            full_scale_voicing = cd.generate_full_chord_voicing(
+                harmonize_notes, cd.FULL_SCALE_KEYBOARD_OCTAVES, start_octave=3
+            )
+            full_scale_labels = cd.degree_labels_for_voicing(
+                full_scale_voicing, root_letter, root_accidental
+            )
+            full_scale_img_base = f"{slug}-full-scale"
+            cd.draw_keyboard(full_scale_voicing, full_scale_labels, full_scale_img_base,
+                              min_octaves=cd.FULL_SCALE_KEYBOARD_OCTAVES)
+            scale_images.append((f"{name} \u2013 Full scale", full_scale_img_base))
+
         # Key signature staff -- a small extra \score (no notes, just
         # clef + key signature) appended after the main one. Only
         # meaningful for a 7-note scale.

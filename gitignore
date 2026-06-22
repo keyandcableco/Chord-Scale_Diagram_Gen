@@ -1,0 +1,33 @@
+# --- Generated output (from chord_diagram.py's CLI mode) ---
+# Running `python3 chord_diagram.py` directly writes its output into
+# the current working directory: per-chord/scale LilyPond source,
+# the combined wrapper, the final PDF, and every keyboard/fretboard/
+# chart image (both PDF and SVG). None of that belongs in version
+# control -- it's regenerated from the spelling you type in each run.
+#
+# Anchored to the repo root (leading /) rather than a blanket *.pdf,
+# so a deliberately-committed example PDF/SVG -- e.g. in an examples/
+# folder for the README -- isn't swept up by this rule. Only output
+# dropped straight in the root, where the CLI actually writes it, gets
+# ignored.
+/*.ly
+/*.lytex
+/*.tex
+/*.pdf
+/*.svg
+/lilypond-book-out/
+
+# --- Python ---
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# --- OS / editor noise ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp

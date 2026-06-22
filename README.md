@@ -4,6 +4,13 @@ A local web form for chord_diagram.py. Spell a chord or scale, pick
 your options, and download keyboard diagrams, guitar fretboard
 diagrams, and a notated PDF -- no command line needed.
 
+## Example output
+
+![Example: WebApp interface](examples/webappgui.png)
+
+A major, with the key signature staff, keyboard diagram, and full
+scale across three octaves. [See the full PDF](examples/eb-major-doc.pdf).
+
 ## Setup
 
 Requires Python 3 and Flask:
@@ -60,6 +67,9 @@ Type a tonic-first spelling (e.g. `C D E F G A B C`) and choose:
   signature that doesn't really exist.
 - **Full guitar fretboard** -- every scale tone across all 6 strings
   and 12 frets, labeled by letter name.
+- **Full scale on keyboard** -- the scale's tones repeated across
+  three octaves on the keyboard, instead of just the single octave
+  you typed in.
 - **Harmonized chord chart** -- builds a triad (or seventh chord) on
   every scale degree and charts the actual chromatic intervals between
   them, so you can see at a glance which chords are major, minor,
@@ -96,6 +106,7 @@ finish the PDF yourself once those tools are installed.
 - This is meant for one person using it locally. It is not hardened
   for being exposed on a network or used by multiple people at once.
 
+
 ## To-Do
 
 - [x] Sharp-keys default filename doesn't distinguish *sharp* at all.
@@ -107,4 +118,3 @@ finish the PDF yourself once those tools are installed.
 - [ ] Choose which clef for staves
 - [x] Show full scale on keyboard option
 - [ ] Fingerings for chords/scales?
-

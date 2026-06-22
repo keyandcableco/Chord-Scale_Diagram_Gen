@@ -6,10 +6,18 @@ diagrams, and a notated PDF -- no command line needed.
 
 ## Example output
 
-![Example: WebApp interface](examples/webappgui.png)
+**The web form:**
 
-A major, with the key signature staff, keyboard diagram, and full
-scale across three octaves. [See the full PDF](examples/eb-major-doc.pdf).
+<img src="examples/webappgui.png" alt="The Chord & Scale Diagram Generator web form" width="500">
+
+**Eb major** -- a scale entry with the key signature staff, keyboard
+diagram, and harmonized chord chart:
+
+<img src="examples/eb-major-doc.png" alt="Eb major example output" width="500">
+
+**G minor 7** -- a single chord with its inversions:
+
+<img src="examples/g-minor-7.png" alt="G minor 7 example output" width="500">
 
 ## Setup
 
@@ -118,3 +126,5 @@ finish the PDF yourself once those tools are installed.
 - [ ] Choose which clef for staves
 - [x] Show full scale on keyboard option
 - [ ] Fingerings for chords/scales?
+- [ ] LaTeX has $\flat$ and $\sharp$, should use for figure titles
+

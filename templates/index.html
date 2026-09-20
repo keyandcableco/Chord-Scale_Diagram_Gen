@@ -40,6 +40,15 @@
     margin-bottom: 2rem;
   }
 
+  .nav-link {
+    display: inline-block;
+    margin-top: 0.6rem;
+    font-size: 0.875rem;
+    color: var(--ink-soft);
+    text-decoration: none;
+  }
+  .nav-link:hover { color: var(--coral); }
+
   header h1 {
     font-family: Georgia, 'Times New Roman', serif;
     font-weight: 700;
@@ -275,6 +284,11 @@
     <h1>Chord &amp; Scale Diagrams</h1>
     <p>Spell a chord or scale, choose what to generate, and get back keyboard diagrams plus a notated PDF.</p>
     <div class="staff-rule"></div>
+    <a class="nav-link" href="/song">Song sheet generator →</a>
+    &ensp;
+    <a class="nav-link" href="/notation">Notation sheet →</a>
+    &ensp;
+    <a class="nav-link" href="/blanks">Blank templates →</a>
   </header>
 
   <form id="genForm">
@@ -339,6 +353,36 @@
         <label for="guitar_shapes" class="check-text" style="text-transform:none;">
           <strong>Guitar fretboard (CAGED shapes)</strong>
           <span>All 5 movable CAGED shapes (C, A, G, E, D forms) for this chord, major or minor triads only.</span>
+        </label>
+      </div>
+      <div class="check-row">
+        <input type="checkbox" id="jazz_shapes" name="jazz_shapes">
+        <label for="jazz_shapes" class="check-text" style="text-transform:none;">
+          <strong>Jazz guitar shapes</strong>
+          <span>Practical voicings with roots on strings 6 and 5, chord tones within a 4-fret window &mdash; works for any chord quality including extensions (6/9, maj7, altered dominants, etc.). The fifth is optional and omitted when needed to fit extensions.</span>
+        </label>
+      </div>
+      <div class="check-row">
+        <input type="checkbox" id="rootless_guitar" name="rootless_guitar">
+        <label for="rootless_guitar" class="check-text" style="text-transform:none;">
+          <strong>Rootless jazz shapes</strong>
+          <span>Leaves the root out and anchors the shape on the third or seventh
+                instead, for playing over a bass player.</span>
+        </label>
+      </div>
+      <div class="check-row">
+        <input type="checkbox" id="rootless_piano" name="rootless_piano">
+        <label for="rootless_piano" class="check-text" style="text-transform:none;">
+          <strong>Rootless keyboard voicings</strong>
+          <span>Drops the root from the keyboard diagrams. Degrees are still counted
+                from it, so the labels stay 3 / b7 / 9 / 13.</span>
+        </label>
+      </div>
+      <div class="check-row">
+        <input type="checkbox" id="pedal_voicings" name="pedal_voicings">
+        <label for="pedal_voicings" class="check-text" style="text-transform:none;">
+          <strong>Include pedal voicings</strong>
+          <span>Adds voicings where an open E or A string sounds the root under a grip further up the neck. Only applies to chords rooted on E or A.</span>
         </label>
       </div>
       <div class="check-row">
@@ -435,6 +479,13 @@
             <label for="chord_guitar_shapes" class="check-text" style="text-transform:none;">
               <strong>Guitar fretboard (CAGED shapes) for each</strong>
               <span>Adds all 5 CAGED shapes to every harmonized chord too (major/minor triads only).</span>
+            </label>
+          </div>
+          <div class="check-row">
+            <input type="checkbox" id="chord_jazz_shapes" name="chord_jazz_shapes">
+            <label for="chord_jazz_shapes" class="check-text" style="text-transform:none;">
+              <strong>Jazz guitar shapes for each</strong>
+              <span>Adds jazz voicings (roots on strings 6 & 5, 4-fret window) to every harmonized chord.</span>
             </label>
           </div>
           <div class="check-row">

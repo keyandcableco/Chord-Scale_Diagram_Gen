@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Song Sheet Generator</title>
+<style>
+  :root {
+    --paper: #FAF7F0;
+    --ink: #2C2825;
+    --ink-soft: #6B6258;
+    --rule: #D8D0C2;
+    --coral: #D85A30;
+    --coral-deep: #993C1D;
+    --coral-pale: #F3E4DC;
+    --panel: #FFFFFF;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    padding-bottom: 4rem;
+  }
+
+  .wrap {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  header {
+    padding: 3rem 0 2rem;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 2rem;
+  }
+
+  header h1 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 0.35rem;
+    color: var(--ink);
+  }
+
+  header p {
+    margin: 0;
+    color: var(--ink-soft);
+  }
+
+  .staff-rule {
+    width: 2.5rem;
+    height: 3px;
+    background: var(--coral);
+    margin-top: 1rem;
+    border-radius: 2px;
+  }
+
+  .nav-link {
+    display: inline-block;
+    margin-top: 0.6rem;
+    font-size: 0.875rem;
+    color: var(--ink-soft);
+    text-decoration: none;
+  }
+  .nav-link:hover { color: var(--coral); }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .card h2 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin: 0 0 1rem;
+    color: var(--ink);
+  }
+
+  label.field-label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-soft);
+    margin-bottom: 0.3rem;
+  }
+
+  input[type="text"],
+  textarea {
+    width: 100%;
+    border: 1.5px solid var(--rule);
+    border-radius: 5px;
+    padding: 0.5rem 0.65rem;
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 0.95rem;
+    font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+  }
+
+  textarea {
+    font-family: 'SF Mono', 'Consolas', 'Menlo', monospace;
+    font-size: 0.875rem;
+    resize: vertical;
+    min-height: 200px;
+  }
+
+  input[type="text"]:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--coral);
+    box-shadow: 0 0 0 3px var(--coral-pale);
+  }
+
+  .field { margin-bottom: 1rem; }
+
+  .hint {
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+    margin-top: 0.3rem;
+  }
+
+  .check-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .check-row input[type="checkbox"] {
+    margin-top: 0.2rem;
+    width: 1rem;
+    height: 1rem;
+    accent-color: var(--coral);
+    flex-shrink: 0;
+  }
+
+  .check-text strong { display: block; font-size: 0.95rem; }
+  .check-text span   { font-size: 0.825rem; color: var(--ink-soft); }
+
+  .check-group-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-soft);
+    margin-bottom: 0.5rem;
+  }
+
+  .nested {
+    margin-left: 1.65rem;
+    margin-top: 0.5rem;
+  }
+
+  button[type="submit"] {
+    background: var(--coral);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.75rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+  button[type="submit"]:hover { background: var(--coral-deep); }
+  button[type="submit"]:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  #status {
+    margin-top: 1.25rem;
+    padding: 1rem 1.25rem;
+    border-radius: 6px;
+    display: none;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+  }
+  #status.ok    { background: #EAF4EA; border: 1px solid #A3CFA3; color: #2A4A2A; }
+  #status.error { background: #FAE9E5; border: 1px solid #E5A090; color: #5A1A0A; }
+
+  #download-link {
+    display: none;
+    margin-top: 0.75rem;
+    padding: 0.65rem 1.25rem;
+    background: var(--ink);
+    color: #fff;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-align: center;
+  }
+  #download-link:hover { background: #444; }
+
+  /* Inline PDF preview */
+  #preview-wrap {
+    display: none;
+    margin-top: 1.5rem;
+  }
+
+  #preview-wrap h3 {
+    font-family: Georgia, serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem;
+    color: var(--ink);
+  }
+
+  #preview-frame {
+    width: 100%;
+    height: 620px;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    background: #fff;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Song Sheet Generator</h1>
+    <p>Enter a list of chords for a song and get a compact reference sheet
+       with guitar shapes and/or keyboard diagrams for all of them.</p>
+    <div class="staff-rule"></div>
+    <a class="nav-link" href="/">← Back to chord &amp; scale diagrams</a>
+  </header>
+
+  <form id="songForm">
+
+    <div class="card">
+      <h2>Song</h2>
+      <div class="field">
+        <label class="field-label" for="song_title">Song title</label>
+        <input type="text" id="song_title" name="song_title"
+               placeholder="e.g. Autumn Leaves">
+      </div>
+      <div class="field">
+        <label class="field-label" for="composer">Composer <span style="font-weight:400;text-transform:none;">(optional)</span></label>
+        <input type="text" id="composer" name="composer"
+               placeholder="e.g. Joseph Kosma">
+      </div>
+      <div class="field">
+        <label class="field-label">Key <span style="font-weight:400;text-transform:none;">(optional &mdash; adds a key signature staff)</span></label>
+        <div style="display:flex;gap:0.5rem;align-items:center;">
+          <input type="text" id="key_tonic" name="key_tonic"
+                 placeholder="e.g. Bb, F#, Eb"
+                 style="width:7rem;flex-shrink:0;">
+          <select id="key_mode" name="key_mode" style="flex:1;border:1.5px solid var(--rule);border-radius:5px;padding:0.5rem 0.65rem;background:var(--paper);color:var(--ink);font-size:0.95rem;">
+            <option value="major">Major</option>
+            <option value="minor">Minor</option>
+            <option value="dorian">Dorian</option>
+            <option value="phrygian">Phrygian</option>
+            <option value="lydian">Lydian</option>
+            <option value="mixolydian">Mixolydian</option>
+            <option value="locrian">Locrian</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="transpose_to">Transpose to</label>
+        <input type="text" id="transpose_to" name="transpose_to"
+               placeholder="e.g. Eb, G, F#" style="width:7rem;">
+        <div class="hint">
+          Leave blank to keep the written key. Moves the chart, the chord
+          spellings and every diagram together. Needs a starting key above
+          (or a <code>{key:}</code> directive) to know how to spell the result &mdash;
+          note that <code>Gb</code> and <code>F#</code> are the same key but spell the
+          chords differently.
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="chord_list">Chords &amp; changes</label>
+        <textarea id="chord_list" name="chord_list" rows="14"
+                  placeholder="{key: Bb}&#10;{time: 4/4}&#10;{tempo: 120}&#10;&#10;{section: A}&#10;| Cm7 | F7 | Bbmaj7 | Ebmaj7 |&#10;|: Am7b5 | D7 |1 Gm6 | Cm7 :|&#10;|2 Gm6 | Bbmaj7 |]&#10;&#10;Cm7: C Eb G Bb&#10;F7: F A Eb&#10;&#10;# Lines starting with # are ignored"></textarea>
+        <div class="hint">
+          <strong>Definitions are now optional.</strong> Chord symbols in the changes are
+          read directly &mdash; <code>Abm7</code>, <code>Ab-7</code>, <code>D9</code>,
+          <code>D7add9</code>, <code>G#7(b9#11)</code>, <code>C6/9</code>,
+          <code>Cø</code>, <code>C7alt</code> and the rest all spell themselves.
+          Write a definition only to override one, or for a symbol the parser
+          cannot read.<br><br>
+          <strong>Definitions</strong> &mdash; <code>Name: note note note ...</code>, spelled low to high.
+          Use <code>b</code> for flat, <code>#</code> for sharp (e.g. <code>Ab</code>, <code>C#</code>, <code>Bbb</code>).
+          Append <code>: 0 1 2</code> for specific inversions (0=root, 1=first, &hellip;). The fifth can be omitted for jazz voicings.
+          These drive the diagrams.<br><br>
+          <strong>Changes</strong> (optional, for the lead sheet) &mdash; bars between <code>|</code> pipes.
+          Chords in a bar split it evenly, so <code>| Dm7 G7 |</code> is two beats each.
+          <code>/</code> adds a beat to the chord before it (<code>| Cmaj7 / / A7 |</code> is 3+1),
+          <code>%</code> repeats the previous bar, <code>|:</code>&hellip;<code>:|</code> marks a repeat,
+          and <code>||</code> or <code>|]</code> ends a section.
+          <code>|1</code> and <code>|2</code> open first and second endings inside a repeat
+          (<code>|: Am7b5 | D7 |1 Gm6 :|</code> then <code>|2 Cm7 |]</code>) &mdash; an ending runs
+          until the next ending marker, a <code>:|</code>, a double bar, or a new
+          <code>{section:}</code>, so it can span more than one line. Close it with
+          <code>||</code> if the tune carries on after it.
+          A chord in the changes with no definition still prints &mdash; it just gets no diagram.<br><br>
+          <strong>Directives</strong> (optional) &mdash; <code>{title:}</code>, <code>{composer:}</code>,
+          <code>{key:}</code>, <code>{time:}</code>, <code>{tempo:}</code>, <code>{section:}</code>,
+          <code>{transpose:}</code>.
+          The fields above win over a directive; <code>{time:}</code>, <code>{tempo:}</code> and
+          <code>{section:}</code> can also appear between bars to change mid-tune.
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>What to include</h2>
+
+      <div class="check-group-label">Lead sheet</div>
+      <div class="check-row">
+        <input type="checkbox" id="lead_sheet" name="lead_sheet">
+        <label for="lead_sheet" class="check-text" style="text-transform:none;">
+          <strong>Lead sheet chart</strong>
+          <span>Engraves the changes as a chart at the top of the sheet, with bar lines,
+                repeats and section marks. Needs at least one line of bars, and LilyPond
+                on the server.</span>
+        </label>
+      </div>
+
+      <div class="check-row">
+        <input type="checkbox" id="chord_subs" name="chord_subs">
+        <label for="chord_subs" class="check-text" style="text-transform:none;">
+          <strong>Include common substitutions</strong>
+          <span>Adds two common alternatives after each chord &mdash; 6/9 for a maj7,
+                a tritone sub for a dominant, and so on.</span>
+        </label>
+      </div>
+
+      <div class="check-group-label">Guitar</div>
+      <div class="check-row">
+        <input type="checkbox" id="guitar_jazz" name="guitar_jazz" checked>
+        <label for="guitar_jazz" class="check-text" style="text-transform:none;">
+          <strong>Jazz shapes</strong>
+          <span>Practical voicings with roots on strings 6 and 5, within a 4-fret
+                window. Works for any chord quality.</span>
+        </label>
+      </div>
+      <div class="check-row">
+        <input type="checkbox" id="rootless_guitar" name="rootless_guitar">
+        <label for="rootless_guitar" class="check-text" style="text-transform:none;">
+          <strong>Rootless</strong>
+          <span>Leaves the root out and anchors the shape on the third or seventh
+                instead, for playing over a bass player.</span>
+        </label>
+      </div>
+      <div class="nested" id="jazz-options">
+        <div class="check-row">
+          <input type="checkbox" id="optional_fifth" name="optional_fifth" checked>
+          <label for="optional_fifth" class="check-text" style="text-transform:none;">
+            <strong>Omit the fifth when needed</strong>
+            <span>Jazz players routinely drop the fifth to fit extensions.</span>
+          </label>
+        </div>
+        <div class="check-row">
+          <input type="checkbox" id="pedal_voicings" name="pedal_voicings">
+          <label for="pedal_voicings" class="check-text" style="text-transform:none;">
+            <strong>Include pedal voicings</strong>
+            <span>Adds voicings where an open E or A string sounds the root under a grip further up the neck. Only applies to chords rooted on E or A.</span>
+          </label>
+        </div>
+      </div>
+      <div class="check-row">
+        <input type="checkbox" id="guitar_caged" name="guitar_caged">
+        <label for="guitar_caged" class="check-text" style="text-transform:none;">
+          <strong>CAGED shapes</strong>
+          <span>All 5 movable forms. Major and minor triads only.</span>
+        </label>
+      </div>
+
+      <div class="check-group-label" style="margin-top:1rem;">Piano</div>
+      <div class="check-row">
+        <input type="checkbox" id="piano" name="piano" checked>
+        <label for="piano" class="check-text" style="text-transform:none;">
+          <strong>Keyboard diagram</strong>
+          <span>Root-position keyboard diagram with degree labels for each chord.</span>
+        </label>
+      </div>
+      <div class="check-row">
+        <input type="checkbox" id="rootless_piano" name="rootless_piano">
+        <label for="rootless_piano" class="check-text" style="text-transform:none;">
+          <strong>Rootless</strong>
+          <span>Drops the root from the voicing. Degrees are still counted from it,
+                so the labels stay 3 / b7 / 9 / 13.</span>
+        </label>
+      </div>
+
+      <div class="check-group-label" style="margin-top:1rem;">Key scale <span style="font-weight:400;text-transform:none;">(requires a key to be set above)</span></div>
+      <div class="check-row">
+        <input type="checkbox" id="scale_keyboard" name="scale_keyboard">
+        <label for="scale_keyboard" class="check-text" style="text-transform:none;">
+          <strong>Scale on keyboard</strong>
+          <span>Show the key's scale across the keyboard, same as the scale generator.</span>
+        </label>
+      </div>
+      <div class="check-row">
+        <input type="checkbox" id="scale_fretboard" name="scale_fretboard">
+        <label for="scale_fretboard" class="check-text" style="text-transform:none;">
+          <strong>Scale on guitar fretboard</strong>
+          <span>Full-neck fretboard view of the key's scale, labeled by degree.</span>
+        </label>
+      </div>
+    </div>
+
+    <button type="submit" id="generateBtn">Generate song sheet</button>
+
+    <div id="status"></div>
+    <a id="download-link" href="#">Download song sheet PDF</a>
+
+    <div id="preview-wrap">
+      <h3>Preview</h3>
+      <iframe id="preview-frame" title="Song sheet preview"></iframe>
+    </div>
+
+  </form>
+</div>
+
+<script>
+  const jazzCheck = document.getElementById('guitar_jazz');
+  const jazzOpts  = document.getElementById('jazz-options');
+  jazzCheck.addEventListener('change', () => {
+    jazzOpts.style.display = jazzCheck.checked ? '' : 'none';
+  });
+
+  // ---------------------------------------------------------------
+  // Session persistence -- save all fields to sessionStorage on every
+  // change so an accidental F5 reload restores everything exactly as
+  // it was. sessionStorage is per-tab and clears when the tab closes,
+  // so it won't bleed into a fresh session. Same approach as the
+  // notation page; the key is separate so the two forms never collide.
+  // ---------------------------------------------------------------
+  const PERSIST_KEY = 'song_form_v1';
+  const TEXT_FIELDS   = ['song_title', 'composer', 'key_tonic', 'transpose_to', 'chord_list'];
+  const SELECT_FIELDS = ['key_mode'];
+  const CHECK_FIELDS  = [
+    'lead_sheet', 'chord_subs', 'guitar_jazz', 'optional_fifth', 'pedal_voicings', 'rootless_guitar',
+    'guitar_caged', 'piano', 'rootless_piano',
+    'scale_keyboard', 'scale_fretboard',
+  ];
+
+  function saveForm() {
+    const data = {};
+    TEXT_FIELDS.concat(SELECT_FIELDS).forEach(id => {
+      const el = document.getElementById(id);
+      if (el) data[id] = el.value;
+    });
+    CHECK_FIELDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) data[id] = el.checked;
+    });
+    try { sessionStorage.setItem(PERSIST_KEY, JSON.stringify(data)); } catch(e) {}
+  }
+
+  function restoreForm() {
+    let data;
+    try { data = JSON.parse(sessionStorage.getItem(PERSIST_KEY)); } catch(e) {}
+    if (!data) return;
+    TEXT_FIELDS.concat(SELECT_FIELDS).forEach(id => {
+      const el = document.getElementById(id);
+      if (el && data[id] !== undefined) el.value = data[id];
+    });
+    CHECK_FIELDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && data[id] !== undefined) el.checked = data[id];
+    });
+    // Re-fire the change event that drives the nested jazz options so
+    // the UI matches the restored checkbox state.
+    jazzCheck.dispatchEvent(new Event('change'));
+  }
+
+  document.getElementById('songForm').addEventListener('input', saveForm);
+  document.getElementById('songForm').addEventListener('change', saveForm);
+
+  // Restore immediately on load (before the user sees the page).
+  restoreForm();
+
+  document.getElementById('songForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn     = document.getElementById('generateBtn');
+    const status  = document.getElementById('status');
+    const dl      = document.getElementById('download-link');
+    const preview = document.getElementById('preview-wrap');
+    const frame   = document.getElementById('preview-frame');
+
+    btn.disabled    = true;
+    btn.textContent = 'Generating…';
+    status.style.display  = 'none';
+    dl.style.display      = 'none';
+    preview.style.display = 'none';
+
+    try {
+      const resp = await fetch('/generate_song', {
+        method: 'POST',
+        body: new FormData(e.target),
+      });
+      const data = await resp.json();
+
+      status.style.display = 'block';
+      status.className     = data.ok || data.download_url ? 'ok' : 'error';
+      status.textContent   = data.message || data.error || '';
+
+      if (data.download_url) {
+        dl.style.display = 'block';
+        dl.href          = data.download_url;
+        dl.textContent   = data.is_zip
+          ? 'Download assets (no pdflatex found)'
+          : 'Download song sheet PDF';
+
+        if (data.view_url) {
+          frame.src = data.view_url;
+          preview.style.display = 'block';
+        }
+      }
+    } catch (err) {
+      status.style.display = 'block';
+      status.className     = 'error';
+      status.textContent   = 'Network error: ' + err.message;
+    } finally {
+      btn.disabled    = false;
+      btn.textContent = 'Generate song sheet';
+    }
+  });
+</script>
+</body>
+</html>

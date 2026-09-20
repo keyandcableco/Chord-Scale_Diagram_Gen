@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notation Sheet</title>
+<style>
+  :root {
+    --paper: #FAF7F0;
+    --ink: #2C2825;
+    --ink-soft: #6B6258;
+    --rule: #D8D0C2;
+    --coral: #D85A30;
+    --coral-deep: #993C1D;
+    --coral-pale: #F3E4DC;
+    --panel: #FFFFFF;
+    --code-bg: #1E1E1E;
+    --code-fg: #D4D4D4;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    padding-bottom: 4rem;
+  }
+
+  .wrap {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  header {
+    padding: 3rem 0 2rem;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 2rem;
+  }
+
+  header h1 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 0.35rem;
+    color: var(--ink);
+  }
+
+  header p { margin: 0; color: var(--ink-soft); }
+
+  .staff-rule {
+    width: 2.5rem; height: 3px;
+    background: var(--coral);
+    margin-top: 1rem; border-radius: 2px;
+  }
+
+  .nav-links {
+    display: flex; gap: 1rem;
+    margin-top: 0.6rem;
+  }
+
+  .nav-link {
+    font-size: 0.875rem;
+    color: var(--ink-soft);
+    text-decoration: none;
+  }
+  .nav-link:hover { color: var(--coral); }
+
+  .columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+
+  @media (max-width: 620px) {
+    .columns { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .card h2 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0 0 1rem;
+    color: var(--ink);
+  }
+
+  label.field-label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-soft);
+    margin-bottom: 0.3rem;
+  }
+
+  input[type="text"], select {
+    width: 100%;
+    border: 1.5px solid var(--rule);
+    border-radius: 5px;
+    padding: 0.45rem 0.65rem;
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 0.9rem;
+  }
+
+  input[type="text"]:focus, select:focus {
+    outline: none;
+    border-color: var(--coral);
+    box-shadow: 0 0 0 3px var(--coral-pale);
+  }
+
+  .field { margin-bottom: 0.85rem; }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .hint {
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    margin-top: 0.25rem;
+  }
+
+  /* LilyPond code editor */
+  .code-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.4rem;
+  }
+
+  .code-label span {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-soft);
+  }
+
+  .code-label a {
+    font-size: 0.75rem;
+    color: var(--coral);
+    text-decoration: none;
+  }
+
+  textarea.code {
+    width: 100%;
+    font-family: 'SF Mono', 'Consolas', 'Menlo', monospace;
+    font-size: 0.85rem;
+    line-height: 1.55;
+    background: var(--code-bg);
+    color: var(--code-fg);
+    border: 1.5px solid #444;
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    resize: vertical;
+    min-height: 160px;
+    tab-size: 2;
+  }
+
+  textarea.code:focus {
+    outline: none;
+    border-color: var(--coral);
+    box-shadow: 0 0 0 3px var(--coral-pale);
+  }
+
+  textarea.plain {
+    width: 100%;
+    font-family: 'SF Mono', 'Consolas', 'Menlo', monospace;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    border: 1.5px solid var(--rule);
+    border-radius: 5px;
+    padding: 0.5rem 0.65rem;
+    background: var(--paper);
+    color: var(--ink);
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  textarea.plain:focus {
+    outline: none;
+    border-color: var(--coral);
+    box-shadow: 0 0 0 3px var(--coral-pale);
+  }
+
+  .check-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    margin-bottom: 0.65rem;
+  }
+
+  .check-row input[type="checkbox"] {
+    margin-top: 0.2rem;
+    width: 1rem; height: 1rem;
+    accent-color: var(--coral);
+    flex-shrink: 0;
+  }
+
+  .check-text strong { display: block; font-size: 0.9rem; }
+  .check-text span { font-size: 0.78rem; color: var(--ink-soft); }
+
+  .check-group-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-soft);
+    margin: 0.75rem 0 0.4rem;
+  }
+
+  .nested { margin-left: 1.6rem; margin-top: 0.35rem; }
+
+  button[type="submit"] {
+    background: var(--coral);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.7rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+  button[type="submit"]:hover { background: var(--coral-deep); }
+  button[type="submit"]:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  #status {
+    margin-top: 1rem;
+    padding: 0.85rem 1.1rem;
+    border-radius: 6px;
+    display: none;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+  }
+  #status.ok    { background: #EAF4EA; border: 1px solid #A3CFA3; color: #2A4A2A; }
+  #status.error { background: #FAE9E5; border: 1px solid #E5A090; color: #5A1A0A; }
+
+  #download-link {
+    display: none;
+    margin-top: 0.6rem;
+    padding: 0.6rem 1.1rem;
+    background: var(--ink);
+    color: #fff;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-align: center;
+  }
+  #download-link:hover { background: #444; }
+
+  /* Inline PDF preview */
+  #preview-wrap {
+    display: none;
+    margin-top: 1.5rem;
+  }
+
+  #preview-wrap h3 {
+    font-family: Georgia, serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem;
+    color: var(--ink);
+  }
+
+  #preview-frame {
+    width: 100%;
+    height: 620px;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    background: #fff;
+  }
+
+  /* Quick-reference syntax card */
+  .syntax-card {
+    background: var(--code-bg);
+    border-radius: 6px;
+    padding: 0.9rem 1rem;
+    font-family: 'SF Mono', 'Consolas', 'Menlo', monospace;
+    font-size: 0.78rem;
+    line-height: 1.7;
+    color: var(--code-fg);
+    margin-top: 0.4rem;
+  }
+
+  .syntax-card .comment { color: #6A9955; }
+  .syntax-card .kw { color: #569CD6; }
+  .syntax-card .val { color: #CE9178; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Notation Sheet</h1>
+    <p>Write LilyPond notation, add reference diagrams, and generate a lesson-ready PDF.</p>
+    <div class="staff-rule"></div>
+    <div class="nav-links">
+      <a class="nav-link" href="/">← Chord &amp; scale diagrams</a>
+      <a class="nav-link" href="/song">Song sheet generator</a>
+    </div>
+  </header>
+
+  <form id="notationForm">
+
+    <!-- Metadata -->
+    <div class="card">
+      <h2>Header</h2>
+      <div class="field-row">
+        <div>
+          <label class="field-label" for="title">Title</label>
+          <input type="text" id="title" name="title" placeholder="e.g. Autumn Leaves — Melody">
+        </div>
+        <div>
+          <label class="field-label" for="composer">Composer / Artist <span style="font-weight:400;text-transform:none;">(optional)</span></label>
+          <input type="text" id="composer" name="composer" placeholder="e.g. Joseph Kosma">
+        </div>
+      </div>
+      <div class="field-row">
+        <div>
+          <label class="field-label">Key <span style="font-weight:400;text-transform:none;">(optional)</span></label>
+          <div style="display:flex;gap:0.4rem;">
+            <input type="text" id="key_tonic" name="key_tonic"
+                   placeholder="e.g. Bb, F#" style="width:6rem;flex-shrink:0;">
+            <select id="key_mode" name="key_mode" style="flex:1;">
+              <option value="major">Major</option>
+              <option value="minor">Minor</option>
+              <option value="dorian">Dorian</option>
+              <option value="phrygian">Phrygian</option>
+              <option value="lydian">Lydian</option>
+              <option value="mixolydian">Mixolydian</option>
+              <option value="locrian">Locrian</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="field-label" for="clef">Clef</label>
+          <select id="clef" name="clef">
+            <option value="treble">Treble</option>
+            <option value="bass">Bass</option>
+            <option value="alto">Alto</option>
+            <option value="tenor">Tenor</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div>
+          <label class="field-label" for="time_sig_select">Time signature</label>
+          <select id="time_sig_select" name="time_sig_select">
+            <option value="">None (LilyPond default 4/4)</option>
+            <option value="4/4">4/4</option>
+            <option value="3/4">3/4</option>
+            <option value="2/4">2/4</option>
+            <option value="2/2">2/2 (cut time)</option>
+            <option value="6/8">6/8</option>
+            <option value="9/8">9/8</option>
+            <option value="12/8">12/8</option>
+            <option value="5/4">5/4</option>
+            <option value="7/8">7/8</option>
+            <option value="free">Other (type below)</option>
+          </select>
+          <input type="text" id="time_sig_custom" name="time_sig_custom"
+                 placeholder="e.g. 5/8"
+                 style="display:none;margin-top:0.3rem;">
+        </div>
+        <div style="display:flex;flex-direction:column;justify-content:flex-end;">
+          <div class="check-row" style="margin-bottom:0;">
+            <input type="checkbox" id="grand_staff" name="grand_staff">
+            <label for="grand_staff" class="check-text" style="text-transform:none;">
+              <strong>Grand staff</strong>
+              <span>Add a bass clef staff below.</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notation input -->
+    <div class="card">
+      <h2>Notation</h2>
+
+      <div class="field">
+        <div class="code-label">
+          <span>Treble / main staff</span>
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <label style="font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);">Staff size</label>
+            <input type="number" id="staff_size" name="staff_size" value="26"
+                   min="10" max="50" step="1"
+                   style="width:4rem;border:1.5px solid var(--rule);border-radius:5px;padding:0.2rem 0.4rem;font-size:0.85rem;background:var(--paper);color:var(--ink);">
+            <a href="https://lilypond.org/doc/v2.24/Documentation/notation/writing-pitches"
+               target="_blank" rel="noopener" style="font-size:0.75rem;color:var(--coral);text-decoration:none;">LilyPond pitch guide ↗</a>
+          </div>
+        </div>
+        <div class="check-row" style="margin-bottom:0.5rem;">
+          <input type="checkbox" id="use_relative" name="use_relative" value="on" checked>
+          <label for="use_relative" class="check-text" style="text-transform:none;">
+            <strong>Relative pitch mode</strong>
+            <span>Each note is assumed to be the nearest pitch to the previous one &mdash;
+                  no octave marks needed for stepwise motion.
+                  Uncheck if you're writing absolute pitches or pasting in your own <code>\relative</code> block.</span>
+          </label>
+        </div>
+        <textarea class="code" id="treble_music" name="treble_music" rows="7"
+                  placeholder="c4 d e f | g2 e2 | f4 e d c | d2 c2"></textarea>
+        <div class="hint">
+          Pitches: <code>c d e f g a b</code> &mdash;
+          add <code>'</code> to go up an octave, <code>,</code> to go down.
+          Durations: <code>1</code> whole, <code>2</code> half, <code>4</code> quarter, <code>8</code> eighth.
+          Accidentals: <code>cs</code> C♯, <code>cf</code> C♭, <code>gs</code> G♯, <code>gf</code> G♭ &mdash;
+          append <code>s</code> for sharp, <code>f</code> for flat.
+          Bar lines: <code>|</code>. Ties: <code>~</code>. Slurs: <code>( )</code>.
+          Dynamics: <code>\mf \p \f</code>. Rests: <code>r4</code>.
+        </div>
+      </div>
+
+      <div class="field" id="bass-field" style="display:none;">
+        <div class="code-label">
+          <span>Bass staff</span>
+        </div>
+        <textarea class="code" id="bass_music" name="bass_music" rows="5"
+                  placeholder="c2 g,2 | f,2 c2 |"></textarea>
+      </div>
+    </div>
+
+    <!-- Reference diagrams -->
+    <div class="card">
+      <h2>Reference diagrams <span style="font-weight:400;font-family:inherit;font-size:0.9rem;color:var(--ink-soft);">(optional)</span></h2>
+
+      <div class="check-row">
+        <input type="checkbox" id="key_sig" name="key_sig" checked>
+        <label for="key_sig" class="check-text" style="text-transform:none;">
+          <strong>Key signature staff</strong>
+          <span>Show the key signature below the notation. Requires a key to be set above.</span>
+        </label>
+      </div>
+      <div class="check-row">
+        <input type="checkbox" id="show_note_names" name="show_note_names">
+        <label for="show_note_names" class="check-text" style="text-transform:none;">
+          <strong>Note name reference</strong>
+          <span>A staff showing every note name from two ledger lines below to two above, for whatever clef is selected.</span>
+        </label>
+      </div>
+      <div class="check-row">
+        <input type="checkbox" id="scale_keyboard" name="scale_keyboard">
+        <label for="scale_keyboard" class="check-text" style="text-transform:none;">
+          <strong>Scale on keyboard</strong>
+          <span>Keyboard diagram of the key's scale with degree labels. Requires a key.</span>
+        </label>
+      </div>
+      <div class="check-row">
+        <input type="checkbox" id="scale_fretboard" name="scale_fretboard">
+        <label for="scale_fretboard" class="check-text" style="text-transform:none;">
+          <strong>Scale on guitar fretboard</strong>
+          <span>Full-neck fretboard view of the key's scale. Requires a key.</span>
+        </label>
+      </div>
+
+      <div style="margin-top:0.5rem;">
+        <label class="field-label" for="chord_list">
+          Chord reference diagrams
+          <span style="font-weight:400;text-transform:none;">(optional)</span>
+        </label>
+        <textarea class="plain" id="chord_list" name="chord_list" rows="4"
+                  placeholder="Cmaj7: C E G B&#10;Fm11: F Ab Eb Bb : 0 1 2&#10;G7: G B D F : 0 2&#10;&#10;# Append : 0 1 2 for root/1st/2nd inversions"></textarea>
+        <div class="hint">Same format as the song sheet. Leave blank for notation-only output.</div>
+      </div>
+
+      <div id="chord-options" style="margin-top:0.75rem;">
+        <div class="check-group-label">Guitar</div>
+        <div class="check-row">
+          <input type="checkbox" id="guitar_jazz" name="guitar_jazz" checked>
+          <label for="guitar_jazz" class="check-text" style="text-transform:none;">
+            <strong>Jazz shapes</strong>
+            <span>Best voicing per root string.</span>
+          </label>
+        </div>
+        <div class="nested">
+          <div class="check-row">
+            <input type="checkbox" id="optional_fifth" name="optional_fifth" checked>
+            <label for="optional_fifth" class="check-text" style="text-transform:none;">
+              <strong>Omit fifth when needed</strong>
+            </label>
+          </div>
+          <div class="check-row">
+            <input type="checkbox" id="pedal_voicings" name="pedal_voicings">
+            <label for="pedal_voicings" class="check-text" style="text-transform:none;">
+              <strong>Include pedal voicings</strong>
+              <span>Adds voicings where an open E or A string sounds the root under a grip further up the neck. Only applies to chords rooted on E or A.</span>
+            </label>
+          </div>
+        </div>
+        <div class="check-row">
+          <input type="checkbox" id="guitar_caged" name="guitar_caged">
+          <label for="guitar_caged" class="check-text" style="text-transform:none;">
+            <strong>CAGED shapes</strong>
+            <span>All 5 movable forms. Major and minor triads only.</span>
+          </label>
+        </div>
+
+        <div class="check-group-label">Piano</div>
+        <div class="check-row">
+          <input type="checkbox" id="piano" name="piano" checked>
+          <label for="piano" class="check-text" style="text-transform:none;">
+            <strong>Keyboard diagram</strong>
+            <span>Root-position keyboard with degree labels.</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- LilyPond quick reference -->
+    <details style="margin-bottom:1.25rem;">
+      <summary style="cursor:pointer;font-size:0.875rem;color:var(--ink-soft);user-select:none;">
+        LilyPond quick reference
+      </summary>
+      <div class="syntax-card" style="margin-top:0.5rem;">
+<span class="comment"># Pitches — relative mode (default), English naming</span>
+c4  d4  e4  f4       <span class="comment"># C D E F quarter notes, no octave marks needed</span>
+g2  a1               <span class="comment"># half G, whole A</span>
+cs  df  gs  af       <span class="comment"># C♯  D♭  G♯  A♭</span>
+c'  c,               <span class="comment"># force up/down an octave from expected</span>
+
+<span class="comment"># Rhythm</span>
+c8 d8 e4~e4          <span class="comment"># eighth eighth tied quarter</span>
+\time 3/4  \time 6/8
+
+<span class="comment"># Common markings</span>
+c4( d4 e2)           <span class="comment"># slur</span>
+c4\mf d4\p           <span class="comment"># dynamics</span>
+c4-. d4->            <span class="comment"># staccato, accent</span>
+\tuplet 3/2 { c8 d8 e8 }  <span class="comment"># triplet</span>
+r4 r2.               <span class="comment"># rests</span>
+\bar "||"            <span class="comment"># double bar</span>
+
+<span class="comment"># Chord names above/below notes</span>
+c4^\markup { "Cmaj7" } e4 g4 e4   <span class="comment"># ^ = above staff</span>
+c4^\markup { \bold "Dm7" } e4     <span class="comment"># bold label</span>
+c4_\markup { "G7" } e4            <span class="comment"># _ = below staff</span>
+<span class="comment"># quotes required if the label contains spaces:</span>
+c4^\markup { "G7 alt" } e4
+
+<span class="comment"># Force a line break</span>
+c4 d4 e4 f4 | \break
+g4 a4 b4 c4 |
+      </div>
+    </details>
+
+    <button type="submit" id="generateBtn">Generate notation sheet</button>
+
+    <div id="status"></div>
+    <a id="download-link" href="#">Download PDF</a>
+
+    <div id="preview-wrap">
+      <h3>Preview</h3>
+      <iframe id="preview-frame" title="Notation sheet preview"></iframe>
+    </div>
+
+  </form>
+</div>
+
+<script>
+  // Show/hide bass staff field
+  const grandCheck = document.getElementById('grand_staff');
+  const bassField  = document.getElementById('bass-field');
+  grandCheck.addEventListener('change', () => {
+    bassField.style.display = grandCheck.checked ? '' : 'none';
+  });
+
+  // Show/hide custom time signature input
+  const timeSigSelect = document.getElementById('time_sig_select');
+  const timeSigCustom = document.getElementById('time_sig_custom');
+  timeSigSelect.addEventListener('change', () => {
+    timeSigCustom.style.display = timeSigSelect.value === 'free' ? '' : 'none';
+    if (timeSigSelect.value === 'free') timeSigCustom.focus();
+  });
+
+  // Show/hide guitar optional-fifth nested option
+  const jazzCheck = document.getElementById('guitar_jazz');
+  const jazzNested = jazzCheck.closest('.check-row').nextElementSibling;
+  jazzCheck.addEventListener('change', () => {
+    jazzNested.style.display = jazzCheck.checked ? '' : 'none';
+  });
+
+  // Tab key inserts spaces in the code editor
+  document.querySelectorAll('textarea.code').forEach(ta => {
+    ta.addEventListener('keydown', e => {
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        const s = ta.selectionStart, end = ta.selectionEnd;
+        ta.value = ta.value.substring(0, s) + '  ' + ta.value.substring(end);
+        ta.selectionStart = ta.selectionEnd = s + 2;
+      }
+    });
+  });
+
+  // ---------------------------------------------------------------
+  // Session persistence -- save all fields to sessionStorage on every
+  // change so an accidental F5 reload restores everything exactly as
+  // it was. sessionStorage is per-tab and clears when the tab closes,
+  // so it won't bleed into a fresh session.
+  // ---------------------------------------------------------------
+  const PERSIST_KEY = 'notation_form_v1';
+  const TEXT_FIELDS = [
+    'title', 'composer', 'key_tonic', 'time_sig_custom',
+    'treble_music', 'bass_music', 'chord_list', 'staff_size',
+  ];
+  const SELECT_FIELDS = ['key_mode', 'clef', 'time_sig_select'];
+  const CHECK_FIELDS  = [
+    'grand_staff', 'use_relative', 'key_sig', 'show_note_names',
+    'scale_keyboard', 'scale_fretboard',
+    'guitar_jazz', 'optional_fifth', 'pedal_voicings', 'guitar_caged', 'piano',
+  ];
+
+  function saveForm() {
+    const data = {};
+    TEXT_FIELDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) data[id] = el.value;
+    });
+    SELECT_FIELDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) data[id] = el.value;
+    });
+    CHECK_FIELDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) data[id] = el.checked;
+    });
+    try { sessionStorage.setItem(PERSIST_KEY, JSON.stringify(data)); } catch(e) {}
+  }
+
+  function restoreForm() {
+    let data;
+    try { data = JSON.parse(sessionStorage.getItem(PERSIST_KEY)); } catch(e) {}
+    if (!data) return;
+    TEXT_FIELDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && data[id] !== undefined) el.value = data[id];
+    });
+    SELECT_FIELDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && data[id] !== undefined) el.value = data[id];
+    });
+    CHECK_FIELDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && data[id] !== undefined) el.checked = data[id];
+    });
+    // Re-fire the change events that drive show/hide logic so the UI
+    // reflects the restored checkbox/select states correctly.
+    grandCheck.dispatchEvent(new Event('change'));
+    timeSigSelect.dispatchEvent(new Event('change'));
+    jazzCheck.dispatchEvent(new Event('change'));
+  }
+
+  // Save on any input or change across the whole form.
+  document.getElementById('notationForm').addEventListener('input', saveForm);
+  document.getElementById('notationForm').addEventListener('change', saveForm);
+
+  // Restore immediately on load (before the user sees the page).
+  restoreForm();
+
+  document.getElementById('notationForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn     = document.getElementById('generateBtn');
+    const status  = document.getElementById('status');
+    const dl      = document.getElementById('download-link');
+    const preview = document.getElementById('preview-wrap');
+    const frame   = document.getElementById('preview-frame');
+
+    btn.disabled = true;
+    btn.textContent = 'Generating…';
+    status.style.display = 'none';
+    dl.style.display = 'none';
+    preview.style.display = 'none';
+
+    try {
+      const resp = await fetch('/generate_notation', {
+        method: 'POST',
+        body: new FormData(e.target),
+      });
+      const data = await resp.json();
+
+      status.style.display = 'block';
+      status.className = data.ok ? 'ok' : 'error';
+      status.textContent = data.message || data.error || '';
+
+      if (data.download_url) {
+        dl.style.display = 'block';
+        dl.href = data.download_url;
+        dl.textContent = data.is_zip
+          ? 'Download assets (lilypond-book not found)'
+          : 'Download PDF';
+
+        if (data.view_url) {
+          frame.src = data.view_url;
+          preview.style.display = 'block';
+        }
+      }
+    } catch (err) {
+      status.style.display = 'block';
+      status.className = 'error';
+      status.textContent = 'Network error: ' + err.message;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Generate notation sheet';
+    }
+  });
+</script>
+</body>
+</html>

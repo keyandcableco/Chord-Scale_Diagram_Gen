@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blank Templates</title>
+<style>
+  :root {
+    --paper: #FAF7F0; --ink: #2C2825; --ink-soft: #6B6258;
+    --rule: #D8D0C2; --coral: #D85A30; --coral-deep: #993C1D;
+    --coral-pale: #F3E4DC; --panel: #FFFFFF;
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--paper); color:var(--ink);
+    font-family:-apple-system,'Segoe UI',system-ui,sans-serif;
+    font-size:15px; line-height:1.5; padding-bottom:4rem; }
+  .wrap { max-width:680px; margin:0 auto; padding:0 1.5rem; }
+  header { padding:3rem 0 2rem; border-bottom:1px solid var(--rule); margin-bottom:2rem; }
+  header h1 { font-family:Georgia,'Times New Roman',serif; font-size:2rem;
+    font-weight:700; margin:0 0 0.35rem; color:var(--ink); }
+  header p { margin:0; color:var(--ink-soft); }
+  .staff-rule { width:2.5rem; height:3px; background:var(--coral); margin-top:1rem; border-radius:2px; }
+  .nav-links { display:flex; gap:1rem; margin-top:0.6rem; flex-wrap:wrap; }
+  .nav-link { font-size:0.875rem; color:var(--ink-soft); text-decoration:none; }
+  .nav-link:hover { color:var(--coral); }
+  .card { background:var(--panel); border:1px solid var(--rule); border-radius:8px;
+    padding:1.25rem 1.5rem; margin-bottom:1.25rem; }
+  .card h2 { font-family:Georgia,'Times New Roman',serif; font-size:1rem;
+    font-weight:700; margin:0 0 0.9rem; color:var(--ink); }
+  label.field-label { display:block; font-size:0.78rem; font-weight:600;
+    text-transform:uppercase; letter-spacing:0.06em; color:var(--ink-soft); margin-bottom:0.3rem; }
+  input[type="text"], input[type="number"], select {
+    border:1.5px solid var(--rule); border-radius:5px;
+    padding:0.45rem 0.65rem; background:var(--paper); color:var(--ink); font-size:0.9rem; }
+  input[type="text"]:focus, input[type="number"]:focus, select:focus {
+    outline:none; border-color:var(--coral); box-shadow:0 0 0 3px var(--coral-pale); }
+  .field { margin-bottom:0.85rem; }
+  .field-row { display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; margin-bottom:0.85rem; }
+  .field-row-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.6rem; margin-bottom:0.85rem; }
+  .hint { font-size:0.78rem; color:var(--ink-soft); margin-top:0.25rem; }
+  .check-row { display:flex; align-items:flex-start; gap:0.6rem; margin-bottom:0.65rem; }
+  .check-row input[type="checkbox"] { margin-top:0.2rem; width:1rem; height:1rem;
+    accent-color:var(--coral); flex-shrink:0; }
+  .check-text strong { display:block; font-size:0.9rem; }
+  .check-text span { font-size:0.78rem; color:var(--ink-soft); }
+  .nested { margin-left:1.6rem; margin-top:0.4rem; margin-bottom:0.4rem; }
+  .nested .field-row, .nested .field-row-3 { margin-bottom:0.5rem; }
+  .nested input, .nested select { width:100%; }
+  button[type="submit"] { background:var(--coral); color:#fff; border:none;
+    border-radius:6px; padding:0.7rem 2rem; font-size:1rem; font-weight:600;
+    cursor:pointer; width:100%; margin-top:0.5rem; }
+  button[type="submit"]:hover { background:var(--coral-deep); }
+  button[type="submit"]:disabled { opacity:0.5; cursor:not-allowed; }
+  #status { margin-top:1rem; padding:0.85rem 1.1rem; border-radius:6px;
+    display:none; font-size:0.875rem; line-height:1.5; white-space:pre-wrap; }
+  #status.ok { background:#EAF4EA; border:1px solid #A3CFA3; color:#2A4A2A; }
+  #status.error { background:#FAE9E5; border:1px solid #E5A090; color:#5A1A0A; }
+  #download-link { display:none; margin-top:0.6rem; padding:0.6rem 1.1rem;
+    background:var(--ink); color:#fff; border-radius:5px; text-decoration:none;
+    font-weight:600; font-size:0.9rem; text-align:center; }
+  #download-link:hover { background:#444; }
+  #preview-wrap { display:none; margin-top:1.5rem; }
+  #preview-wrap h3 { font-family:Georgia,serif; font-size:0.95rem; font-weight:700;
+    margin:0 0 0.5rem; color:var(--ink); }
+  #preview-frame { width:100%; height:580px; border:1px solid var(--rule);
+    border-radius:6px; background:#fff; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Blank Templates</h1>
+    <p>Generate printable blank keyboards, guitar diagrams, staves, and more.</p>
+    <div class="staff-rule"></div>
+    <div class="nav-links">
+      <a class="nav-link" href="/">← Chord &amp; scale diagrams</a>
+      <a class="nav-link" href="/song">Song sheet</a>
+      <a class="nav-link" href="/notation">Notation sheet</a>
+    </div>
+  </header>
+
+  <form id="blanksForm">
+
+    <div class="card">
+      <h2>Page</h2>
+      <div class="field">
+        <label class="field-label" for="title">Title <span style="font-weight:400;text-transform:none;">(optional)</span></label>
+        <input type="text" id="title" name="title" style="width:100%;"
+               placeholder="e.g. Practice Sheet — Week 4">
+      </div>
+    </div>
+
+    <!-- Keyboard -->
+    <div class="card">
+      <h2>Keyboard</h2>
+      <div class="check-row">
+        <input type="checkbox" id="keyboard" name="keyboard" checked>
+        <label for="keyboard" class="check-text" style="text-transform:none;">
+          <strong>Blank keyboard diagram</strong>
+          <span>A clean keyboard with no highlighted keys.</span>
+        </label>
+      </div>
+      <div class="nested" id="kb-opts">
+        <div class="field-row">
+          <div>
+            <label class="field-label" for="keyboard_octaves">Octaves</label>
+            <select id="keyboard_octaves" name="keyboard_octaves" style="width:100%;">
+              <option value="1">1</option>
+              <option value="2" selected>2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+            </select>
+          </div>
+          <div style="display:flex;flex-direction:column;justify-content:flex-end;">
+            <div class="check-row" style="margin-bottom:0;">
+              <input type="checkbox" id="keyboard_labels" name="keyboard_labels" checked>
+              <label for="keyboard_labels" class="check-text" style="text-transform:none;">
+                <strong>Letter names on keys</strong>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Guitar -->
+    <div class="card">
+      <h2>Guitar</h2>
+      <div class="check-row">
+        <input type="checkbox" id="chord_boxes" name="chord_boxes" checked>
+        <label for="chord_boxes" class="check-text" style="text-transform:none;">
+          <strong>Blank chord box grid</strong>
+          <span>4-fret chord diagram boxes arranged in a grid.</span>
+        </label>
+      </div>
+      <div class="nested" id="cb-opts">
+        <div class="field-row">
+          <div>
+            <label class="field-label" for="chord_box_cols">Columns per row</label>
+            <select id="chord_box_cols" name="chord_box_cols" style="width:100%;">
+              <option value="3">3</option>
+              <option value="4" selected>4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label" for="chord_box_rows">Rows</label>
+            <select id="chord_box_rows" name="chord_box_rows" style="width:100%;">
+              <option value="2">2</option>
+              <option value="3" selected>3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="check-row" style="margin-top:0.5rem;">
+        <input type="checkbox" id="full_fretboard" name="full_fretboard">
+        <label for="full_fretboard" class="check-text" style="text-transform:none;">
+          <strong>Blank full-neck fretboard</strong>
+          <span>All 6 strings × 12 frets with fret markers, no note dots.</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Harmony -->
+    <div class="card">
+      <h2>Harmony</h2>
+      <div class="check-row">
+        <input type="checkbox" id="harmony_grid" name="harmony_grid">
+        <label for="harmony_grid" class="check-text" style="text-transform:none;">
+          <strong>Blank harmonic box chart</strong>
+          <span>The chromatic box grid with nothing filled in. Prints landscape on its own page.</span>
+        </label>
+      </div>
+      <div class="nested" id="hg-opts">
+        <div class="field-row">
+          <div>
+            <label class="field-label" for="harmony_rows">Chord rows</label>
+            <select id="harmony_rows" name="harmony_rows" style="width:100%;">
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7" selected>7</option>
+              <option value="8">8</option>
+              <option value="12">12</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label" for="harmony_octaves">Chromatic span</label>
+            <select id="harmony_octaves" name="harmony_octaves" style="width:100%;">
+              <option value="1">1 octave (12 columns)</option>
+              <option value="2" selected>2 octaves (24 columns)</option>
+            </select>
+          </div>
+        </div>
+        <div class="check-row" style="margin-bottom:0;">
+          <input type="checkbox" id="harmony_interval_names" name="harmony_interval_names" checked>
+          <label for="harmony_interval_names" class="check-text" style="text-transform:none;">
+            <strong>Print interval names across the top</strong>
+            <span>1, b2, 2, b3 … Uncheck to leave that row blank to fill in too.</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Staves -->
+    <div class="card">
+      <h2>Staves</h2>
+      <div class="check-row">
+        <input type="checkbox" id="staves" name="staves" checked>
+        <label for="staves" class="check-text" style="text-transform:none;">
+          <strong>Blank staves</strong>
+          <span>Empty music staves with bar lines.</span>
+        </label>
+      </div>
+      <div class="nested" id="stave-opts">
+        <div class="field-row">
+          <div>
+            <label class="field-label" for="stave_systems">Systems</label>
+            <select id="stave_systems" name="stave_systems" style="width:100%;">
+              <option value="4">4</option>
+              <option value="6">6</option>
+              <option value="8" selected>8</option>
+              <option value="10">10</option>
+              <option value="12">12</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label" for="stave_bars">Bars per system</label>
+            <select id="stave_bars" name="stave_bars" style="width:100%;">
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4" selected>4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-row">
+          <div>
+            <label class="field-label" for="stave_time">Time signature <span style="font-weight:400;text-transform:none;">(optional)</span></label>
+            <input type="text" id="stave_time" name="stave_time"
+                   placeholder="e.g. 4/4, 3/4, 6/8" style="width:100%;">
+          </div>
+          <div>
+            <label class="field-label" for="stave_size">Staff size (pt)</label>
+            <input type="number" id="stave_size" name="stave_size" value="20"
+                   min="12" max="36" step="1" style="width:100%;">
+          </div>
+        </div>
+        <div class="check-row" style="margin-bottom:0;">
+          <input type="checkbox" id="stave_grand" name="stave_grand">
+          <label for="stave_grand" class="check-text" style="text-transform:none;">
+            <strong>Grand staff (treble + bass)</strong>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" id="generateBtn">Generate templates</button>
+    <div id="status"></div>
+    <a id="download-link" href="#">Download PDF</a>
+    <div id="preview-wrap">
+      <h3>Preview</h3>
+      <iframe id="preview-frame" title="Blank templates preview"></iframe>
+    </div>
+
+  </form>
+</div>
+
+<script>
+  // Show/hide nested options based on parent checkbox
+  function toggleNested(checkId, nestedId) {
+    const cb = document.getElementById(checkId);
+    const el = document.getElementById(nestedId);
+    const update = () => { el.style.display = cb.checked ? '' : 'none'; };
+    cb.addEventListener('change', update);
+    update();
+  }
+  toggleNested('keyboard', 'kb-opts');
+  toggleNested('chord_boxes', 'cb-opts');
+  toggleNested('harmony_grid', 'hg-opts');
+  toggleNested('staves', 'stave-opts');
+
+  document.getElementById('blanksForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn     = document.getElementById('generateBtn');
+    const status  = document.getElementById('status');
+    const dl      = document.getElementById('download-link');
+    const preview = document.getElementById('preview-wrap');
+    const frame   = document.getElementById('preview-frame');
+
+    btn.disabled = true;
+    btn.textContent = 'Generating…';
+    status.style.display = 'none';
+    dl.style.display = 'none';
+    preview.style.display = 'none';
+
+    try {
+      const resp = await fetch('/generate_blanks', {
+        method: 'POST', body: new FormData(e.target),
+      });
+      const data = await resp.json();
+
+      status.style.display = 'block';
+      status.className = data.ok ? 'ok' : 'error';
+      status.textContent = data.message || data.error || '';
+
+      if (data.download_url) {
+        dl.style.display = 'block';
+        dl.href = data.download_url;
+        dl.textContent = data.is_zip ? 'Download assets' : 'Download PDF';
+        if (data.view_url) {
+          frame.src = data.view_url;
+          preview.style.display = 'block';
+        }
+      }
+    } catch (err) {
+      status.style.display = 'block';
+      status.className = 'error';
+      status.textContent = 'Network error: ' + err.message;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Generate templates';
+    }
+  });
+</script>
+</body>
+</html>

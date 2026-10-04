@@ -128,3 +128,8 @@ finish the PDF yourself once those tools are installed.
 - [ ] Fingerings for chords/scales?
 - [ ] LaTeX has $\flat$ and $\sharp$, should use for figure titles
 
+## License
+
+Copyright © 2026 Greg Miller / The Key & Cable Company.
+
+Licensed under the [GNU General Public License v3.0](LICENSE). You can use, study, share and modify it. If you distribute it or a modified version, you have to make the source available under the same licence.
